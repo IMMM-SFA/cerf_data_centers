@@ -169,3 +169,21 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+
+.DS_Store
+*.tif
+*.shp
+*.shx
+*.cpg
+*.dbf
+*.prj
+*.avg
+*yml
+data/
+data_center_database/
+notebooks/
+create_config.ipynb
+*.zip
+process_nlcd.py
+region_to_id.py
