@@ -25,13 +25,14 @@
 
 **Locational Cost (LC) to Site in Each Grid Cell**
 
-$$LC = PC + EC + PPT + RPT + ST + IC$$
+$$LC = PC + BC + EC + PPT + RPT + ST + IC$$
 
 Where,
 
 | Variable | Description | Formulation |
 |----------|-------------|------------------|
-| PC | Property Cost | Campus size (sqft) x Land Cost  ($/sqft) |
+| PC | Property CAPEX Cost | Campus size (sqft) x Land Cost  ($/sqft) |
+| BC | Building CAPEX Cost | Cost to construct building ($) |
 | EC | Electricity Cost | Annual electricity demand (MWh) x Electricity Rate ($/MWh) |
 | PPT | Personal Property Tax | Assessed personal property value ($) x Tax Rate (%) |
 | RPT | Real Property Tax | Assessed real property value ($) x  Tax Rate (%) |
