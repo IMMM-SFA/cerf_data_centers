@@ -1,0 +1,59 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "cerf_data_centers"
+description = "An open-source geospatial Python package for assessing and analyzing future data center expansion feasibility."
+readme = "README.md"
+version = "0.1.0"
+requires-python = ">=3.11"
+license = {file = "LICENSE"}
+authors = [
+    {name = "Kendall Mongird", email = "kendall.mongird@pnnl.gov"},
+]
+maintainers = [
+    {name = "Kendall Mongird", email = "kendall.mongird@pnnl.gov"},
+]
+dependencies = [
+    'numpy>=2.2.6',
+    'pandas>=2.2.3',
+    'geopandas>=1.1.0',
+    'rasterio>=1.4.3',
+    'shapely>=2.1.1',
+    'PyYAML>=6.0.2',
+    'networkx>=3.5',
+    'tqdm>=4.67.1',
+]
+
+classifiers = [
+  "Programming Language :: Python :: 3.11",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=6.0",
+    "pytest-cov>=2.12.1",
+]
+docs = [
+    "setuptools>=57.0.0",
+    "build>=0.5.1",
+    "ipykernel>=6.15.1",
+    "autodoc>=0.5.0",
+    "nbsphinx~=0.8.6",
+    "sphinx~=7.2.6",
+    "sphinx-design~=0.5.0",
+    "sphinx-rtd-theme~=2.0.0",
+    "sphinx-mathjax-offline~=0.0.2",
+    "sphinx-panels>=0.6.0",
+]
+deploy = [
+    "twine>=4.0.1",
+]
+
+[project.urls]
+Repository = "https://github.com/IMMM-SFA/cerf_data_centers"
+
+[tool.hatch.build]
+packages = ["cerf_data_centers"]  # set importable package name to "cerf_data_centers"
+include = ["cerf_data_centers"]
