@@ -1,10 +1,9 @@
-# CERF Data Center Siting
+# CERF - Data Centers
 
 ## 1. Overview
 
 **Purpose:**  
-*This package includes a siting algorithm to determine optimal locations of new data center facilities*
-
+*An open-source geospatial Python package for assessing and analyzing future data center expansion feasibility*
 
 
 ## 2. Siting Algorithm
@@ -15,7 +14,7 @@
 
  **2. Create Graph Network of Suitable Subregion Areas** - For given subregion (e.g. state), create a graph network of suitable siting locations.
 
- **3. Calculate Locational Cost** - For each suitable grid cell in region (represented by graph node), calculate locational cost based on cost and constraint layers.
+ **3. Calculate Locational Cost** - For each suitable grid cell in region (represented by graph node), calculate `locational cost` based on cost and constraint layers.
 
  **4. Determine Optimal Siting Locations** - Select suitable location with the lowest locational cost that meets minimum size criteria. Group with neighboring suitable cells up to indicated size to determine data center campus. Repeat for as many sites as indicated in configuration until either there are no more locations to site or no suitable locations remain.
 
@@ -79,7 +78,7 @@ expansion_plan:
         n_sites: 10
 
     oregon:
-        region_id: 32 
+        region_id: 41 
         campus_size_square_ft: 1000000
         equipment_capital_expenditure: 201600000
         building_capital_expenditure: 262200000
@@ -134,16 +133,19 @@ The following raster cost/constraint layers are required. Paths to each of these
 
 ### Requirements
 
-- `Python >= 3.11`
+```
+Python >= 3.11
+```
 
 ### Dependencies
 
-- `numpy >= 2.0`
-- `pandas > `
-- `geopandas`
-- `rasterio`
-- `shapely`
-- `PyYAML`
-- `networkx`
-- `tqdm`
-
+```
+numpy >= 2.2.6
+pandas >= 2.2.3
+geopandas >= 1.1.0
+rasterio >= 1.4.3
+shapely >= 2.1.1
+PyYAML >= 6.0.2
+networkx >= 3.5
+tqdm >= 4.67.1
+```
