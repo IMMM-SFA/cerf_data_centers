@@ -179,7 +179,7 @@ cython_debug/
 *.dbf
 *.prj
 *.avg
-*yml
+yml
 data/
 data_center_database/
 notebooks/
