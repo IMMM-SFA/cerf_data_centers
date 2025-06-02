@@ -187,3 +187,4 @@ create_config.ipynb
 *.zip
 process_nlcd.py
 region_to_id.py
+*.ipynb
