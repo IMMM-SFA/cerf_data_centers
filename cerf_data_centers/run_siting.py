@@ -2,11 +2,11 @@ from tqdm import tqdm
 import time
 import logging
 
-from load_data import *
-from calculate_locational_cost import *
-from determine_sites import *
-from configure_output import *
-from utils import *
+from .load_data import *
+from .calculate_locational_cost import *
+from .determine_sites import *
+from .configure_output import *
+from .utils import *
 
 
 def run(config):
