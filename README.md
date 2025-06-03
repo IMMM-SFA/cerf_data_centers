@@ -1,3 +1,6 @@
+[![tests](https://github.com/IMMM-SFA/cerf_data_centers/actions/workflows/build.yml/badge.svg)](https://github.com/IMMM-SFA/cerf_data_centers/actions/workflows/build.yml)
+
+
 # CERF - Data Centers
 
 ## 1. Overview
