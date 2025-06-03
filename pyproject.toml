@@ -7,7 +7,7 @@ name = "cerf_data_centers"
 version = "0.1.0"
 description = "Data Center Siting Tool - Identifies optimal locations for data centers based on various constraints and costs"
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.11"
 license = { text = "MIT" }
 authors = [
     { name = "CERF" }
@@ -17,23 +17,21 @@ classifiers = [
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Scientific/Engineering",
 ]
 dependencies = [
-    "tqdm>=4.65.0",
-    "geopandas>=0.13.0",
-    "pandas>=1.5.0",
-    "pyyaml>=6.0",
-    "click>=8.0.0",
-    "numpy>=1.20.0",
-    "rasterio>=1.3.0",
-    "shapely>=2.0.0",
-    "networkx>=3.0.0",
+    "tqdm>=4.67.1",
+    "geopandas>=0.14.2",
+    "pandas>=2.2.3",
+    "pyyaml>=6.0.2",
+    "click>=8.1.7",
+    "numpy>=2.2.2",
+    "rasterio>=1.3.8",
+    "shapely>=2.0.3",
+    "networkx>=3.3.1",
 ]
 
 [project.scripts]

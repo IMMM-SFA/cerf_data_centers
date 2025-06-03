@@ -119,16 +119,3 @@ pytest
 ruff check .
 ```
 
-## Requirements
-
-- Python >= 3.7
-- Dependencies:
-  - tqdm >= 4.65.0
-  - geopandas >= 0.13.0
-  - pandas >= 1.5.0
-  - pyyaml >= 6.0
-  - click >= 8.0.0
-  - numpy >= 1.20.0
-  - rasterio >= 1.3.0
-  - shapely >= 2.0.0
-  - networkx >= 3.0.0
