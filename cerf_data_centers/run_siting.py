@@ -1,6 +1,8 @@
 from tqdm import tqdm
 import time
 import logging
+import geopandas as gpd
+import pandas as pd
 
 from .load_data import load_region_raster, load_suitability_raster, collect_constraints, get_yaml
 from .calculate_locational_cost import calculate_locational_cost
@@ -9,17 +11,32 @@ from .configure_output import configure_output
 from .utils import convert_sqft_to_grid_cells
 
 
-def run(config):
+def run(config: str) -> gpd.GeoDataFrame:
     """
-    Run the siting process based on the provided configuration file.
+    Run the data center siting process based on the provided configuration file.
 
-    Parameters:
-    config (str): Path to the configuration file in YAML format.
+    Args:
+        config (str): Path to the configuration file in YAML format.
 
     Returns:
-    output_gdf (GeoDataFrame): A GeoDataFrame containing the siting results.
-    """
+        gpd.GeoDataFrame: A GeoDataFrame containing the siting results for all processed regions.
 
+    This function performs the following steps:
+        1. Loads configuration, region, and suitability rasters.
+        2. Loads cost and constraint layers for suitable grid cells.
+        3. Iterates over each region in the expansion plan:
+            a. Extracts suitable siting areas for the region.
+            b. Builds a graph of connected suitable areas.
+            c. Calculates locational costs for each suitable grid cell.
+            d. Selects sites based on minimum locational cost.
+            e. Aggregates results into a GeoDataFrame.
+        4. Optionally saves the output to a file if specified in the configuration.
+
+    Raises:
+        FileNotFoundError: If the configuration file does not exist.
+        ValueError: If required configuration keys are missing.
+
+    """
     t0 = time.time()
     fmt = '%(asctime)s - %(levelname)s - %(message)s'
     logging.basicConfig(level=logging.INFO, format=fmt)
@@ -79,23 +96,26 @@ def run(config):
         # calculate locational cost in each suitable grid cell
         logger.info(f"Calculating locational costs...")
         for node, attrs in tqdm(list(G.nodes(data=True))):
-            G.nodes[node]['locational_cost'], _ = calculate_locational_cost(campus_size_square_ft, 
-                                                            land_cost_sqft = attrs['land_cost_per_sqft'], 
-                                                            elec_rate_per_kwh = attrs['electricity_rate_per_kwh'], 
-                                                            personal_prop_tax_rate = attrs['personal_prop_tax_rate'],
-                                                            real_property_tax_rate = attrs['real_property_tax_rate'],
-                                                            sales_tax_rate = attrs['sales_tax_rate'],
-                                                            interconnection_distance_km = attrs['interconnection_distance_km'],
-                                                            cooling_type = attrs['cooling_type'],
-                                                            equipment_capex = equipment_capex,
-                                                            building_capex = building_capex,
-                                                            interconnection_cost_km = interconnection_cost_km,
-                                                            data_center_power_mw = data_center_power_mw,
-                                                            pue = pue,
-                                                        )
-                                                    
+            G.nodes[node]['locational_cost'], _ = calculate_locational_cost(
+                campus_size_square_ft=campus_size_square_ft,
+                land_cost_sqft=attrs['land_cost_per_sqft'],
+                elec_rate_per_kwh=attrs['electricity_rate_per_kwh'],
+                personal_prop_tax_rate=attrs['personal_prop_tax_rate'],
+                real_property_tax_rate=attrs['real_property_tax_rate'],
+                sales_tax_rate=attrs['sales_tax_rate'],
+                interconnection_distance_km=attrs['interconnection_distance_km'],
+                cooling_type=attrs['cooling_type'],
+                equipment_capex=equipment_capex,
+                building_capex=building_capex,
+                interconnection_cost_km=interconnection_cost_km,
+                data_center_power_mw=data_center_power_mw,
+                pue=pue,
+            )
+
         # site based on the minimum locational cost
-        result_list = site_based_on_locational_cost(G, number_of_sites, min_block_size, region_name, transform)
+        result_list = site_based_on_locational_cost(
+            G, number_of_sites, min_block_size, region_name, transform
+        )
 
         logger.info(f"Sited {len(result_list)} data center(s) in region {region_name}.")
     
@@ -111,17 +131,106 @@ def run(config):
     return output_gdf
 
 
-if __name__ == "__main__":
-    import argparse
+def main():
+    """Main entry point for the data center siting tool."""
     import os
+    import sys
 
-    parser = argparse.ArgumentParser(description="Run the data center siting.")
-    parser.add_argument("config", type=str, help="Path to the configuration file (YAML format).")
-    args = parser.parse_args()
+    # Configure logging
+    log_level = logging.DEBUG if args.verbose else logging.INFO
+    log_format = '%(asctime)s - %(levelname)s - %(message)s'
+    
+    if args.log_file:
+        logging.basicConfig(
+            level=log_level,
+            format=log_format,
+            handlers=[
+                logging.FileHandler(args.log_file),
+                logging.StreamHandler(sys.stdout)
+            ]
+        )
+    else:
+        logging.basicConfig(
+            level=log_level,
+            format=log_format
+        )
 
-    # Check if the config file exists
-    if not os.path.isfile(args.config):
-        raise FileNotFoundError(f"Configuration file {args.config} not found.")
+    logger = logging.getLogger(__name__)
 
-    # Run the siting process
-    output_gdf = run(args.config)
+    try:
+        # Check if the config file exists
+        if not os.path.isfile(args.config):
+            raise FileNotFoundError(f"Configuration file {args.config} not found.")
+
+        # Run the siting process
+        output_gdf = run(args.config)
+
+        # Save output if specified via CLI
+        if args.output:
+            logger.info(f"Saving output to {args.output}")
+            output_gdf.to_file(args.output)
+
+    except Exception as e:
+        logger.error(f"Error running data center siting: {str(e)}")
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()
+
+import click
+import logging
+import os
+import sys
+from pathlib import Path
+
+@click.group()
+def cli():
+    """Data Center Siting Tool - Identifies optimal locations for data centers based on various constraints and costs."""
+    pass
+
+@cli.command()
+@click.argument('config', type=click.Path(exists=True, dir_okay=False, path_type=Path))
+@click.option('-o', '--output', type=click.Path(dir_okay=False, path_type=Path),
+              help='Path to save the output GeoJSON file (overrides config file setting)')
+@click.option('-v', '--verbose', is_flag=True, help='Enable verbose logging output')
+@click.option('--log-file', type=click.Path(dir_okay=False, path_type=Path),
+              help='Path to save the log file')
+def site(config: Path, output: Path, verbose: bool, log_file: Path):
+    """Run the data center siting process using the provided configuration file."""
+    # Configure logging
+    log_level = logging.DEBUG if verbose else logging.INFO
+    log_format = '%(asctime)s - %(levelname)s - %(message)s'
+    
+    if log_file:
+        logging.basicConfig(
+            level=log_level,
+            format=log_format,
+            handlers=[
+                logging.FileHandler(log_file),
+                logging.StreamHandler(sys.stdout)
+            ]
+        )
+    else:
+        logging.basicConfig(
+            level=log_level,
+            format=log_format
+        )
+
+    logger = logging.getLogger(__name__)
+
+    try:
+        # Run the siting process
+        output_gdf = run(str(config))
+
+        # Save output if specified via CLI
+        if output:
+            logger.info(f"Saving output to {output}")
+            output_gdf.to_file(output)
+
+    except Exception as e:
+        logger.error(f"Error running data center siting: {str(e)}")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    cli()
