@@ -8,9 +8,10 @@ version = "0.1.0"
 description = "Data Center Siting Tool - Identifies optimal locations for data centers based on various constraints and costs"
 readme = "README.md"
 requires-python = ">=3.11"
-license = { text = "MIT" }
+license = { text = "LICENSE" }
 authors = [
-    { name = "CERF" }
+    {name = "Kendall Mongird", email = "kendall.mongird@pnnl.gov"},
+    {name = "Chris Vernon", email = "chris.vernon@pnnl.gov"},
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
