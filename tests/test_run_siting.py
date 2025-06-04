@@ -121,7 +121,7 @@ def test_cli_site_command(monkeypatch, minimal_config, dummy_raster_files, tmp_p
         'real_property_tax_rate': 1,
         'sales_tax_rate': 1,
         'interconnection_distance_km': 1,
-        'cooling_type': 'air'
+        'cooling_type': 0
     })
     monkeypatch.setattr(run_siting, "convert_sqft_to_grid_cells", lambda x: 1)
     monkeypatch.setattr(run_siting, "get_region_suit_array", lambda *a, **k: dummy_array)
@@ -136,7 +136,7 @@ def test_cli_site_command(monkeypatch, minimal_config, dummy_raster_files, tmp_p
                     'real_property_tax_rate': 1,
                     'sales_tax_rate': 1,
                     'interconnection_distance_km': 1,
-                    'cooling_type': 'air'
+                    'cooling_type': 0
                 }
             }
         
