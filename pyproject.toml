@@ -4,56 +4,49 @@ build-backend = "hatchling.build"
 
 [project]
 name = "cerf_data_centers"
-description = "An open-source geospatial Python package for assessing and analyzing future data center expansion feasibility."
-readme = "README.md"
 version = "0.1.0"
+description = "Data Center Siting Tool - Identifies optimal locations for data centers based on various constraints and costs"
+readme = "README.md"
 requires-python = ">=3.11"
-license = {file = "LICENSE"}
+license = { text = "LICENSE" }
 authors = [
     {name = "Kendall Mongird", email = "kendall.mongird@pnnl.gov"},
+    {name = "Chris Vernon", email = "chris.vernon@pnnl.gov"},
 ]
-maintainers = [
-    {name = "Kendall Mongird", email = "kendall.mongird@pnnl.gov"},
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering",
 ]
 dependencies = [
-    'numpy>=2.2.6',
-    'pandas>=2.2.3',
-    'geopandas>=1.1.0',
-    'rasterio>=1.4.3',
-    'shapely>=2.1.1',
-    'PyYAML>=6.0.2',
-    'networkx>=3.5',
-    'tqdm>=4.67.1',
+    "tqdm>=4.67.1",
+    "geopandas>=0.14.2",
+    "pandas>=2.2.3",
+    "pyyaml>=6.0.2",
+    "click>=8.1.7",
+    "numpy>=2.2.2",
+    "rasterio>=1.3.8",
+    "shapely>=2.0.3",
+    "networkx>=3.3.1",
 ]
 
-classifiers = [
-  "Programming Language :: Python :: 3.11",
-]
+[project.scripts]
+cerf-siting = "cerf_data_centers.run_siting:cli"
 
 [project.optional-dependencies]
-test = [
-    "pytest>=6.0",
-    "pytest-cov>=2.12.1",
-]
-docs = [
-    "setuptools>=57.0.0",
-    "build>=0.5.1",
-    "ipykernel>=6.15.1",
-    "autodoc>=0.5.0",
-    "nbsphinx~=0.8.6",
-    "sphinx~=7.2.6",
-    "sphinx-design~=0.5.0",
-    "sphinx-rtd-theme~=2.0.0",
-    "sphinx-mathjax-offline~=0.0.2",
-    "sphinx-panels>=0.6.0",
-]
-deploy = [
-    "twine>=4.0.1",
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "black>=23.0",
+    "isort>=5.0",
+    "mypy>=1.0",
+    "ruff>=0.1.0",
 ]
 
-[project.urls]
-Repository = "https://github.com/IMMM-SFA/cerf_data_centers"
-
-[tool.hatch.build]
-packages = ["cerf_data_centers"]  # set importable package name to "cerf_data_centers"
-include = ["cerf_data_centers"]
+[tool.hatch.build.targets.wheel]
+packages = ["cerf_data_centers"]
