@@ -64,17 +64,17 @@ def load_region_raster(siting_region_fn: str) -> tuple[np.ndarray, rasterio.Affi
     return region_array, transform
 
 
-def load_suitability_raster(suitability_fn: str) -> np.ndarray:
+def load_raster_array(raster_fn: str) -> np.ndarray:
     """
-    Load the suitability raster from the specified file path.
+    Load the raster from the specified file path.
 
     Args:
-        suitability_fn (str): Path to the suitability raster file.
+        raster_fn (str): Path to the raster file.
 
     Returns:
-        np.ndarray: A 2D numpy array representing the suitability raster.
+        np.ndarray: A 2D numpy array representing the raster.
     """
-    with rasterio.open(suitability_fn) as src:
+    with rasterio.open(raster_fn) as src:
         suit_array = src.read(1)
     return suit_array
 
