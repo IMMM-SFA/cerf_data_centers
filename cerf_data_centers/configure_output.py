@@ -27,7 +27,7 @@ def configure_output(
             coordinates, region name, cost, and buffered geometries 
             dissolved by data center ID.
     """
-    i_list, x_list, y_list, lc_list, r_list, cs_list, ex_list, bx_list = [], [], [], [], [], [], [], []
+    i_list, x_list, y_list, loc_cost_musd_list, r_list, cs_list, ex_list, bx_list = [], [], [], [], [], [], [], []
     it_list, put_list, mcf_list,wcf_list, mec_list, mgy_list, mgyc_list, ekwh_list, ppt_list = [], [], [], [], [],[], [], [], []
     rpt_list, st_list, ikm_list, pc_list, ec_list, tpt_list, tst_list, ic_list = [], [], [], [], [], [], [], []
     ngs_list, nlc_list, wss_list = [], [], []
@@ -35,6 +35,8 @@ def configure_output(
     for i in range(len(result_list)):
         c = result_list[i][i]['coord_list']
         n = result_list[i][i]['locational_cost']
+        # Convert to millions and round to 4 decimals
+        n_musd = round(n / 1_000_000, 4)
         r = result_list[i][i]['region_name']
         cs = result_list[i][i]['campus_size_square_ft']
         ex = result_list[i][i]['equipment_capex']
@@ -65,7 +67,7 @@ def configure_output(
             x_list.append(j[0])
             y_list.append(j[1])
             r_list.append(r)
-            lc_list.append(n)
+            loc_cost_musd_list.append(n_musd)
             cs_list.append(cs)
             ex_list.append(ex)
             bx_list.append(bx)
@@ -95,7 +97,7 @@ def configure_output(
         'region': r_list,
         'xcoord': x_list,
         'ycoord': y_list,
-        'cost': lc_list,
+        'locational_cost_million_usd': loc_cost_musd_list,
         'campus_size_square_ft': cs_list,
         'equipment_capex': ex_list,
         'building_capex': bx_list,
@@ -119,7 +121,6 @@ def configure_output(
         'normalized_gravity_score': ngs_list,
         'normalized_locational_cost': nlc_list,
         'weighted_siting_score': wss_list
-
     }
     df = pd.DataFrame.from_dict(data)
 
