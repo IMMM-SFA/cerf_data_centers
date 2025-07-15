@@ -7,20 +7,47 @@ from cerf_data_centers.configure_output import configure_output
 
 @pytest.fixture
 def sample_result_list():
-    # Simulate two data centers in region 42
+    # Simulate two data centers in region 42 with all required keys
+    base_keys = {
+        'campus_size_square_ft': 1000,
+        'equipment_capex': 2000000,
+        'building_capex': 3000000,
+        'it_power_mw': 5,
+        'pue': 1.2,
+        'mechanical_cooling_frac': 0.5,
+        'water_cooling_frac': 0.5,
+        'cooling_energy_demand_mwh': 100,
+        'cooling_water_demand_mgy': 10,
+        'cooling_water_consumption_mgy': 8,
+        'elec_rate_per_kwh': 0.08,
+        'personal_prop_tax_rate': 0.01,
+        'real_property_tax_rate': 0.012,
+        'sales_tax_rate': 0.07,
+        'interconnection_distance_km': 2,
+        'property_cost_usd': 10000,
+        'electricity_cost_usd': 50000,
+        'total_property_tax_usd': 2000,
+        'total_sales_tax_usd': 3000,
+        'interconnection_cost_usd': 4000,
+        'normalized_gravity_score': 0.5,
+        'normalized_locational_cost': 0.6,
+        'weighted_siting_score': 0.7
+    }
     return [
         {
             0: {
                 'coord_list': [(100, 200), (110, 210), (120, 220)],
                 'locational_cost': 5.5,
-                'region_name': 'TestRegion'
+                'region_name': 'TestRegion',
+                **base_keys
             }
         },
         {
             1: {
                 'coord_list': [(200, 300), (210, 310)],
                 'locational_cost': 7.2,
-                'region_name': 'TestRegion'
+                'region_name': 'TestRegion',
+                **base_keys
             }
         }
     ]
@@ -75,12 +102,38 @@ def test_configure_output_empty_result():
 
 def test_configure_output_single_point():
     # Test with a single data center, single point
+    base_keys = {
+        'campus_size_square_ft': 1000,
+        'equipment_capex': 2000000,
+        'building_capex': 3000000,
+        'it_power_mw': 5,
+        'pue': 1.2,
+        'mechanical_cooling_frac': 0.5,
+        'water_cooling_frac': 0.5,
+        'cooling_energy_demand_mwh': 100,
+        'cooling_water_demand_mgy': 10,
+        'cooling_water_consumption_mgy': 8,
+        'elec_rate_per_kwh': 0.08,
+        'personal_prop_tax_rate': 0.01,
+        'real_property_tax_rate': 0.012,
+        'sales_tax_rate': 0.07,
+        'interconnection_distance_km': 2,
+        'property_cost_usd': 10000,
+        'electricity_cost_usd': 50000,
+        'total_property_tax_usd': 2000,
+        'total_sales_tax_usd': 3000,
+        'interconnection_cost_usd': 4000,
+        'normalized_gravity_score': 0.5,
+        'normalized_locational_cost': 0.6,
+        'weighted_siting_score': 0.7
+    }
     result_list = [
         {
             0: {
                 'coord_list': [(1, 2)],
                 'locational_cost': 1.1,
-                'region_name': 'SingleRegion'
+                'region_name': 'SingleRegion',
+                **base_keys
             }
         }
     ]
