@@ -62,7 +62,7 @@ def test_configure_output_returns_geodataframe(sample_result_list):
 def test_configure_output_columns(sample_result_list):
     region_id = 42
     gdf = configure_output(sample_result_list, region_id)
-    expected_columns = {'id', 'region', 'xcoord', 'ycoord', 'cost', 'geometry'}
+    expected_columns = {'id', 'region', 'xcoord', 'ycoord', 'locational_cost_million_usd', 'geometry'}
     assert expected_columns.issubset(set(gdf.columns))
 
 def test_configure_output_id_and_region(sample_result_list):
@@ -76,10 +76,10 @@ def test_configure_output_id_and_region(sample_result_list):
 def test_configure_output_costs(sample_result_list):
     region_id = 42
     gdf = configure_output(sample_result_list, region_id)
-    # Costs should match those in the input
-    costs = set(gdf['cost'])
-    assert 5.5 in costs
-    assert 7.2 in costs
+    # Costs should match those in the input, converted to millions and rounded to 4 decimals
+    costs = set(gdf['locational_cost_million_usd'])
+    assert round(5.5 / 1_000_000, 4) in costs
+    assert round(7.2 / 1_000_000, 4) in costs
 
 def test_configure_output_geometry_is_polygon(sample_result_list):
     region_id = 42
@@ -141,5 +141,5 @@ def test_configure_output_single_point():
     assert len(gdf) == 1
     assert gdf.iloc[0]['id'] == '7_0'
     assert gdf.iloc[0]['region'] == 'SingleRegion'
-    assert gdf.iloc[0]['cost'] == 1.1
+    assert gdf.iloc[0]['locational_cost_million_usd'] == round(1.1 / 1_000_000, 4)
     assert gdf.iloc[0]['geometry'].geom_type in ('Polygon', 'MultiPolygon')
