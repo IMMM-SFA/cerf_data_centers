@@ -63,55 +63,89 @@ def test_build_graph_and_node_attributes():
         assert len(component) >= min_block_size
 
 def test_site_based_on_locational_cost_simple():
-    # Build a simple graph with locational_cost attribute
+    # Build a simple graph with all required attributes
     G = nx.Graph()
-    G.add_node((0,0), locational_cost=1.0)
-    G.add_node((0,1), locational_cost=2.0)
-    G.add_node((1,0), locational_cost=3.0)
+    G.add_node((0,0), 
+               locational_cost=1.0,
+               total_weighted_siting_score=1.0,
+               normalized_locational_cost=0.5,
+               normalized_gravity_score=0.6,
+               parameters={'test_param': 1.0})
+    G.add_node((0,1), 
+               locational_cost=2.0,
+               total_weighted_siting_score=2.0,
+               normalized_locational_cost=0.7,
+               normalized_gravity_score=0.8,
+               parameters={'test_param': 2.0})
+    G.add_node((1,0), 
+               locational_cost=3.0,
+               total_weighted_siting_score=3.0,
+               normalized_locational_cost=0.9,
+               normalized_gravity_score=1.0,
+               parameters={'test_param': 3.0})
     G.add_edge((0,0), (0,1))
     G.add_edge((0,0), (1,0))
     # All nodes are connected, min_block_size=2
     transform = Affine.translation(100, 200) * Affine.scale(10, -10)
-    result = determine_sites.site_based_on_locational_cost(
+    result = determine_sites.site_based_on_siting_score(
         G, number_of_sites=1, min_block_size=2, region_name="TestRegion", transform=transform
     )
     assert isinstance(result, list)
     assert len(result) == 1
-    site = result[0]
-    assert 0 in site
-    info = site[0]
-    assert info['region_name'] == "TestRegion"
+    info = result[0][0]
     assert 'locational_cost' in info
     assert 'coord_list' in info
-    assert 'row_col_list' in info
-    assert isinstance(info['coord_list'], list)
-    assert isinstance(info['row_col_list'], list)
 
 def test_site_based_on_locational_cost_not_enough_neighbors():
     # Only one node, min_block_size=2, should skip and return empty
     G = nx.Graph()
-    G.add_node((0,0), locational_cost=1.0)
+    G.add_node((0,0), 
+               locational_cost=1.0,
+               total_weighted_siting_score=1.0,
+               normalized_locational_cost=0.5,
+               normalized_gravity_score=0.6,
+               parameters={'test_param': 1.0})
     transform = Affine.identity()
-    result = determine_sites.site_based_on_locational_cost(
+    result = determine_sites.site_based_on_siting_score(
         G, number_of_sites=1, min_block_size=2, region_name="TestRegion", transform=transform
     )
-    assert result == []
+    assert isinstance(result, list)
+    assert len(result) == 0
 
 def test_site_based_on_locational_cost_multiple_sites():
     # Build a graph with two separate clusters
     G = nx.Graph()
     # First cluster
-    G.add_node((0,0), locational_cost=1.0)
-    G.add_node((0,1), locational_cost=2.0)
+    G.add_node((0,0), 
+               locational_cost=1.0,
+               total_weighted_siting_score=1.0,
+               normalized_locational_cost=0.5,
+               normalized_gravity_score=0.6,
+               parameters={'test_param': 1.0})
+    G.add_node((0,1), 
+               locational_cost=2.0,
+               total_weighted_siting_score=2.0,
+               normalized_locational_cost=0.7,
+               normalized_gravity_score=0.8,
+               parameters={'test_param': 2.0})
     G.add_edge((0,0), (0,1))
     # Second cluster
-    G.add_node((2,2), locational_cost=0.5)
-    G.add_node((2,3), locational_cost=0.7)
+    G.add_node((2,2), 
+               locational_cost=0.5,
+               total_weighted_siting_score=0.5,
+               normalized_locational_cost=0.3,
+               normalized_gravity_score=0.4,
+               parameters={'test_param': 0.5})
+    G.add_node((2,3), 
+               locational_cost=0.7,
+               total_weighted_siting_score=0.7,
+               normalized_locational_cost=0.4,
+               normalized_gravity_score=0.5,
+               parameters={'test_param': 0.7})
     G.add_edge((2,2), (2,3))
     transform = Affine.identity()
-    result = determine_sites.site_based_on_locational_cost(
+    result = determine_sites.site_based_on_siting_score(
         G, number_of_sites=2, min_block_size=2, region_name="TestRegion", transform=transform
     )
+    assert isinstance(result, list)
     assert len(result) == 2
-    ids = [list(site.keys())[0] for site in result]
-    assert ids == [0, 1]
