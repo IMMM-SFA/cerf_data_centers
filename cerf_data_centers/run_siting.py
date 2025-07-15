@@ -3,6 +3,10 @@ import time
 import logging
 import geopandas as gpd
 import pandas as pd
+import click
+import os
+import sys
+from pathlib import Path
 
 from .load_data import load_region_raster, load_raster_array, collect_constraints, get_yaml
 from .calculate_locational_cost import calculate_locational_cost
@@ -185,63 +189,11 @@ def run(config: str) -> gpd.GeoDataFrame:
     return output_gdf
 
 
-def main():
-    """Main entry point for the data center siting tool."""
-    import os
-    import sys
-
-    # Configure logging
-    log_level = logging.DEBUG if args.verbose else logging.INFO
-    log_format = '%(asctime)s - %(levelname)s - %(message)s'
-    
-    if args.log_file:
-        logging.basicConfig(
-            level=log_level,
-            format=log_format,
-            handlers=[
-                logging.FileHandler(args.log_file),
-                logging.StreamHandler(sys.stdout)
-            ]
-        )
-    else:
-        logging.basicConfig(
-            level=log_level,
-            format=log_format
-        )
-
-    logger = logging.getLogger(__name__)
-
-    try:
-        # Check if the config file exists
-        if not os.path.isfile(args.config):
-            raise FileNotFoundError(f"Configuration file {args.config} not found.")
-
-        # Run the siting process
-        output_gdf = run(args.config)
-
-        # Save output if specified via CLI
-        if args.output:
-            logger.info(f"Saving output to {args.output}")
-            output_gdf.to_file(args.output)
-
-    except Exception as e:
-        logger.error(f"Error running data center siting: {str(e)}")
-        sys.exit(1)
-
-
-if __name__ == "__main__":
-    main()
-
-import click
-import logging
-import os
-import sys
-from pathlib import Path
-
 @click.group()
 def cli():
     """Data Center Siting Tool - Identifies optimal locations for data centers based on various constraints and costs."""
     pass
+
 
 @cli.command()
 @click.argument('config', type=click.Path(exists=True, dir_okay=False, path_type=Path))
@@ -285,6 +237,7 @@ def site(config: Path, output: Path, verbose: bool, log_file: Path):
     except Exception as e:
         logger.error(f"Error running data center siting: {str(e)}")
         sys.exit(1)
+
 
 if __name__ == "__main__":
     cli()
