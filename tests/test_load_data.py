@@ -83,8 +83,10 @@ def test_load_region_raster(raster_file):
 
 def test_load_suitability_raster(raster_file):
     raster_path, arr, _ = raster_file
-    suit_array = load_data.load_suitability_raster(raster_path)
-    assert np.array_equal(suit_array, arr)
+    suit_array = load_data.load_raster_array(raster_path)
+    assert isinstance(suit_array, np.ndarray)
+    assert suit_array.shape == arr.shape
+    assert np.allclose(suit_array, arr)
 
 @pytest.fixture
 def constraint_rasters(tmp_path):
