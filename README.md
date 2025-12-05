@@ -3,7 +3,27 @@
 
 # CERF Data Centers
 
-A tool for identifying optimal locations for data centers based on various constraints and costs.
+A comprehensive tool for identifying optimal locations for data centers based on a combination of geospatial, economic, and infrastructure constraints and costs.
+
+## What Does This Program Do?
+
+**CERF Data Centers** is designed to help project feasible locations to build new data centers. It does this by:
+
+- **Integrating geospatial data**: Uses raster files representing land cost, electricity rates, property taxes, and other constraints across a region.
+- **Applying user-defined constraints**: Allows you to specify which factors are most important (e.g., land cost, energy cost, proximity to infrastructure).
+- **Calculating locational costs**: For each potential site, the tool computes a total cost that includes land, building and equipemnt capex, energy, taxes, and interconnection.
+- **Siting algorithm**: Finds clusters of suitable grid cells that meet the minimum size and constraint requirements for a data center campus.
+- **Market gravity scoring**: Optionally incorporates market size and distance to market to prioritize sites with better access to demand.
+- **Flexible configuration**: All inputs and parameters are specified in a YAML configuration file, making it easy to adapt to different regions or scenarios.
+- **Output**: Produces a GeoDataFrame (and optionally a GeoJSON file) with the selected sites, their costs, and relevant attributes for further analysis or mapping.
+
+### Typical Workflow
+1. **Prepare input rasters**: Gather or generate raster files for all relevant constraints (land cost, electricity, taxes, etc.) and a region raster.
+2. **Write a configuration file**: Specify the paths to your input files, the constraints to consider, and the data center requirements for each region.
+3. **Run the tool**: Use the CLI or Python API to process the data and identify optimal sites.
+4. **Review results**: Analyze the output GeoDataFrame or GeoJSON to see the recommended sites, their costs, and other attributes.
+
+---
 
 ## Installation
 

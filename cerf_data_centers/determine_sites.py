@@ -135,16 +135,16 @@ def build_graph(
     return G
 
 
-def site_based_on_locational_cost(
+def site_based_on_siting_score(
     G: nx.Graph,
     number_of_sites: int,
     min_block_size: int,
     region_name: str,
     transform: Affine,
-    attribute: str = 'locational_cost'
+    attribute: str = 'total_weighted_siting_score'
 ) -> List[Dict[int, Dict[str, Any]]]:
     """
-    Select sites based on the minimum locational cost from a graph of suitable areas.
+    Select sites based on the minimum locational cost and gravity score from a graph of suitable areas.
 
     Args:
         G (nx.Graph): The graph representing the siting areas, where nodes are grid cells and
@@ -212,10 +212,18 @@ def site_based_on_locational_cost(
             result_dict[i] = {
                 'region_name': region_name,
                 'min_node': (x, y),
-                'locational_cost': H.nodes[min_node][attribute],
+                'weighted_siting_score': H.nodes[min_node][attribute],
+                'locational_cost': H.nodes[min_node]['locational_cost'],
+                'normalized_locational_cost': H.nodes[min_node]['normalized_locational_cost'],
+                'normalized_gravity_score': H.nodes[min_node]['normalized_gravity_score'],
                 'coord_list': coord_list,
                 'row_col_list': row_col_list
             }
+
+            # attach parameters to the result dict
+            result_dict[i].update(H.nodes[min_node]['parameters'])
+            
+            # Add the result to the result list
             result_list.append(result_dict)
 
             # Remove sited areas from available
