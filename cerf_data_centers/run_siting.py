@@ -23,24 +23,37 @@ def run(config: str) -> gpd.GeoDataFrame:
     Args:
         config (str): Path to the configuration file in YAML format.
 
-    Returns:
-        gpd.GeoDataFrame: A GeoDataFrame containing the siting results for all processed regions.
+    Returns
+    -------
+    geopandas.GeoDataFrame
+        A GeoDataFrame containing siting results (one or more sites per
+        region) produced by the algorithm.
 
-    This function performs the following steps:
-        1. Loads configuration, region, and suitability rasters.
-        2. Loads cost and constraint layers for suitable grid cells.
-        3. Iterates over each region in the expansion plan:
-            a. Extracts suitable siting areas for the region.
-            b. Builds a graph of connected suitable areas.
-            c. Calculates locational costs for each suitable grid cell.
-            d. Selects sites based on minimum locational cost.
-            e. Aggregates results into a GeoDataFrame.
-        4. Optionally saves the output to a file if specified in the configuration.
+    Raises
+    ------
+    FileNotFoundError
+        If the provided `config` path does not exist.
+    KeyError, ValueError
+        If required configuration keys or sections are missing or malformed.
+    RuntimeError
+        For unexpected runtime errors during raster processing or graph
+        operations.
 
-    Raises:
-        FileNotFoundError: If the configuration file does not exist.
-        ValueError: If required configuration keys are missing.
+    Notes
+    -----
+    The function performs these high-level steps:
+    - Load configuration and raster inputs (region, suitability, market).
+    - Collect cost/constraint layers for suitable grid cells.
+    - For each region in `expansion_plan`:
+      - Extract suitable blocks and build a connected-component graph.
+      - Compute locational costs and market-gravity scores per node.
+      - Normalize scores, compute combined siting score, and select top
+        `n_sites` according to the configuration.
+    - Optionally write the result to `settings.output_file` if present.
 
+    This function is intended to be callable programmatically (returns a
+    GeoDataFrame) and is also wrapped by a CLI command `site` in this
+    module which performs additional logging and CLI-based output options.
     """
     t0 = time.time()
     fmt = '%(asctime)s - %(levelname)s - %(message)s'
