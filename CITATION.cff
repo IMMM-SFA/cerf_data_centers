@@ -10,4 +10,5 @@ authors:
 title: "CERF-DC: A Python package to evaluate the feasibility and costs of data center siting options"
 version: "1.0.0"
 date-released: 2025-12-08
+doi: "10.5281/zenodo.17859233"
 url: "https://github.com/IMMM-SFA/cerf_data_centers"
