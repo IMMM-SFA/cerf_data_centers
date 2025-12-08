@@ -8,6 +8,6 @@ authors:
   given-names: "Chris R."
   orcid: "https://orcid.org/0000-0002-3406-6214"
 title: "CERF-DC: A Python package to evaluate the feasibility and costs of data center siting options"
-version: "0.1.0"
+version: "1.0.0"
 date-released: 2025-12-08
 url: "https://github.com/IMMM-SFA/cerf_data_centers"
