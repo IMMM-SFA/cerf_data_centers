@@ -1,0 +1,13 @@
+cff-version: 1.2.0
+message: "If you use this software in your work, please cite it as below."
+authors:
+- family-names: "Mongird"
+  given-names: "Kendall"
+  orcid: "https://orcid.org/0000-0003-2807-7088"
+- family-names: "Vernon"
+  given-names: "Chris R."
+  orcid: "https://orcid.org/0000-0002-3406-6214"
+title: "CERF-DC: A Python package to evaluate the feasibility and costs of data center siting options"
+version: "0.1.0"
+date-released: 2025-12-08
+url: "https://github.com/IMMM-SFA/cerf_data_centers"
