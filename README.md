@@ -139,3 +139,10 @@ pytest
 ruff check .
 ```
 
+## How to Cite
+
+If you use this package in your research, please cite:
+
+```
+Mongird, K., & Vernon, C. R. (2025). CERF-DC: A Python package to evaluate the feasibility and costs of data center siting options. Zenodo. https://doi.org/10.5281/zenodo.17859233
+```
