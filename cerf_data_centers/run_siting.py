@@ -124,6 +124,16 @@ def run(config: str) -> gpd.GeoDataFrame:
         logger.info(f"Building siting graph...")
         G = build_graph(region_suit_array, min_block_size, raster_names, node_values)
         
+        # Guard: check if graph is empty (no suitable sites available)
+        if G.number_of_nodes() == 0:
+            unsited_count = number_of_sites
+            logger.warning(
+            f"Region '{region_name}': Unable to site {unsited_count} data centers out of requested {number_of_sites} site(s)."
+        )
+            region_gdf = configure_output([], region_id)
+            output_gdf = pd.concat([output_gdf, region_gdf])
+            continue
+        
         # calculate locational cost in each suitable grid cell
         logger.info(f"Calculating locational costs...")
         for node, attrs in tqdm(list(G.nodes(data=True))):

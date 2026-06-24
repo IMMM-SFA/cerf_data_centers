@@ -143,3 +143,24 @@ def test_cli_site_help():
     result = runner.invoke(run_siting.site, ["--help"])
     assert result.exit_code == 0
     assert "Run the data center siting process" in result.output
+
+@pytest.mark.filterwarnings("ignore::DeprecationWarning:pyogrio.*:")
+def test_run_empty_suitable_sites_region(monkeypatch, minimal_config, dummy_raster_files, tmp_path, caplog):
+    """Test that a region with no suitable sites logs warning and continues processing."""
+    import logging
+    
+    # Monkeypatch get_region_suit_array to return all zeros (no suitable cells)
+    monkeypatch.setattr(
+        "cerf_data_centers.run_siting.get_region_suit_array",
+        lambda *args, **kwargs: np.zeros((10, 10), dtype=np.uint8)
+    )
+    
+    with caplog.at_level(logging.WARNING):
+        output_gdf = run_siting.run(str(minimal_config))
+    
+    # Should complete without raising an exception
+    assert isinstance(output_gdf, gpd.GeoDataFrame)
+    
+    # Should log warning about unsited sites
+    assert "Unable to site 1 data centers out of requested 1 site(s)" in caplog.text
+    assert "TestRegion" in caplog.text

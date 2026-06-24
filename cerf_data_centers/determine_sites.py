@@ -1,10 +1,13 @@
 from collections import deque
 from typing import List, Dict, Any
 from affine import Affine
+import logging
 
 import rasterio
 import numpy as np
 import networkx as nx
+
+logger = logging.getLogger(__name__)
 
 
 def get_region_suit_array(
@@ -233,5 +236,12 @@ def site_based_on_siting_score(
         else:
             # Bad node (not enough neighbors): remove only the min_node and continue
             H.remove_node(min_node)
+
+    # Check for partial shortfall and warn if fewer sites were sited than requested
+    if len(result_list) < number_of_sites:
+        unsited_count = number_of_sites - len(result_list)
+        logger.warning(
+            f"Region '{region_name}': Unable to site {unsited_count} data centers out of requested {number_of_sites} site(s)."
+        )
 
     return result_list

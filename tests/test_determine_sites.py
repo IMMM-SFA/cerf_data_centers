@@ -2,6 +2,7 @@ import pytest
 import numpy as np
 import networkx as nx
 from affine import Affine
+import logging
 
 from cerf_data_centers import determine_sites
 
@@ -149,3 +150,65 @@ def test_site_based_on_locational_cost_multiple_sites():
     )
     assert isinstance(result, list)
     assert len(result) == 2
+
+def test_site_based_on_siting_score_partial_shortfall(caplog):
+    """Test that partial shortfall (requested 10, available 5) logs warning and returns available sites."""
+    # Build a graph with only enough nodes for 2 sites (4 nodes + extras)
+    G = nx.Graph()
+    # First cluster (2 nodes)
+    G.add_node((0,0), 
+               locational_cost=1.0,
+               total_weighted_siting_score=1.0,
+               normalized_locational_cost=0.5,
+               normalized_gravity_score=0.6,
+               parameters={'test_param': 1.0})
+    G.add_node((0,1), 
+               locational_cost=2.0,
+               total_weighted_siting_score=2.0,
+               normalized_locational_cost=0.7,
+               normalized_gravity_score=0.8,
+               parameters={'test_param': 2.0})
+    G.add_edge((0,0), (0,1))
+    # Second cluster (2 nodes)
+    G.add_node((2,2), 
+               locational_cost=0.5,
+               total_weighted_siting_score=0.5,
+               normalized_locational_cost=0.3,
+               normalized_gravity_score=0.4,
+               parameters={'test_param': 0.5})
+    G.add_node((2,3), 
+               locational_cost=0.7,
+               total_weighted_siting_score=0.7,
+               normalized_locational_cost=0.4,
+               normalized_gravity_score=0.5,
+               parameters={'test_param': 0.7})
+    G.add_edge((2,2), (2,3))
+    # Third cluster (2 nodes)
+    G.add_node((4,4), 
+               locational_cost=0.3,
+               total_weighted_siting_score=0.3,
+               normalized_locational_cost=0.2,
+               normalized_gravity_score=0.3,
+               parameters={'test_param': 0.3})
+    G.add_node((4,5), 
+               locational_cost=0.4,
+               total_weighted_siting_score=0.4,
+               normalized_locational_cost=0.25,
+               normalized_gravity_score=0.35,
+               parameters={'test_param': 0.4})
+    G.add_edge((4,4), (4,5))
+    
+    transform = Affine.identity()
+    
+    # Request 10 sites but only 3 clusters available (so max 3 sites can be sited)
+    with caplog.at_level(logging.WARNING):
+        result = determine_sites.site_based_on_siting_score(
+            G, number_of_sites=10, min_block_size=2, region_name="TestRegion", transform=transform
+        )
+    
+    # Should return 3 sites (one per cluster)
+    assert isinstance(result, list)
+    assert len(result) == 3
+    
+    # Check that warning was logged
+    assert "Region 'TestRegion': Unable to site 7 data centers out of requested 10 site(s)." in caplog.text
